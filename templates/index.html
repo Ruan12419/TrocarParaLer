@@ -90,35 +90,6 @@ Início
 <footer>
     <h3>TrocarParaLer | Ruan Lima</h3>
 </footer>
-
-<h1>Adicionar Usuário</h1>
-<form action="/add_usuario" method="post">
-    <label for="nome">Nome:</label><br>
-    <input type="text" id="nome" name="nome"><br>
-    <label for="email">Email:</label><br>
-    <input type="email" id="email" name="email"><br>
-    <label for="senha">Senha:</label><br>
-    <input type="password" id="senha" name="senha"><br>
-    <input type="submit" value="Adicionar Usuário">
-</form>
-<h2>Usuários</h2>
-<table class="table-livros">
-    <tr>
-        <th>ID</th>
-        <th>Nome</th>
-        <th>Email</th>
-        <th>Senha</th>
-    </tr>
-    {% for usuario in usuarios %}
-    <tr>
-        <td>{{ usuario[0] }}</td>
-        <td>{{ usuario[1] }}</td>
-        <td>{{ usuario[2] }}</td>
-        <td>{{ usuario[3] }}</td>
-    </tr>
-    {% endfor %}
-</table>
-
 {% block styleLivros %}
 {% endblock %}
 </body>
