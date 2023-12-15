@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Login
+{% endblock %}
+
+{% block erro %}
+{% endblock %}
+
+{% block main %}
+        <div class="container" id="formLogin">
+            <form action="/login" method="post" autocomplete="off">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="text" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="senha" class="form-label">Senha</label>
+                    <input type="password" class="form-control" id="senha" name="senha" required>
+                </div>
+                <button type="submit" class="btn btn-success" id="submitBtn">Login</button>
+            </form>
+            <button type="button" class="btn btn" id="cadastro" onclick="toggleCadastro()">Cadastrar-se</button>
+        </div>
+
+        <div class="container" id="formCadastro" style="display: none;">
+            <form action="/cadastrar_usuario" method="post" autocomplete="off">
+                <div class="mb-3">
+                    <label for="nome" class="form-label">Nome</label>
+                    <input type="text" class="form-control" id="nome" name="nome" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="text" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="senha" class="form-label">Senha</label>
+                    <input type="password" class="form-control" id="senha" name="senha" required>
+                </div>
+                <div class="mb-3">
+                    <label for="confirmacao-senha" class="form-label">Confirme sua senha</label>
+                    <input type="password" class="form-control" id="confirmacao-senha" name="confirmacao_senha" required>
+                </div>
+                <button type="submit" class="btn btn-primary" id="submitBtn">Cadastrar-se</button>
+            </form>
+        </div>
+
+        <style>
+            main {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+    
+                margin: 0;
+            }
+        </style>
+    <script>
+        $(document).ready(function(){
+            $("#erroMsg").slideDown(500);
+            $("#concluidoMsg").slideDown(500);
+
+            setTimeout(function() {
+                $("#erroMsg").slideUp(500);
+            }, 3000);
+
+            setTimeout(function() {
+                $("#concluidoMsg").slideUp(500);
+            }, 3000);
+        });
+
+        function toggleCadastro(){
+            $("#formLogin").toggle();
+            $("#formCadastro").toggle();
+        }
+    </script>
+    {% endblock %}
+
+    <footer>
+        <h3>TrocarParaLer | Ruan Lima</h3>
+    </footer>
+</body>
+</html>
