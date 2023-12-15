@@ -1,0 +1,96 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Meus Livros
+{% endblock %}
+
+{% block erro %}
+{% endblock %}
+
+{% block ofertas %}
+<div class="container-fluid py-5 text-center">
+    <h5>Adicione um Livro</h5>
+    <div class="container" id="addOferta">
+        <form action="/add_oferta" method="post" autocomplete="off">
+            <div class="mb-3">
+                <label class="input-group-text" for="oferta">Livro Ofertado</label>
+                <select class="form-select" id="oferta" name="oferta" required>
+                    <option selected>Escolha...</option>
+                    {% for mLivro in mLivros %}
+                    <option value="{{mLivro.id}}">{{mLivro.titulo}}</option>
+                    {% endfor %}
+                </select>
+                <label class="input-group-text" for="desejo">Livro Desejado</label>
+                <select class="form-select" id="desejo" name="desejo" required>
+                    <option selected>Escolha...</option>
+                    {% for livro in livros %}
+                    {% if livro.id_usuario != session['user_id']%}
+                    <option value="{{livro.id}}">{{livro.titulo}}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select><br>
+                <textarea name="contato" id="contato" cols="60" rows="5" required placeholder="Insira aqui as informações de contato"></textarea>
+                <input type="number" class="form-control" id="fcation" name="fcation" value="{{session['user_id']}}"
+                    hidden required>
+            </div>
+            <button type="submit" class="btn btn-success" id="submitBtn">Criar Oferta</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block livros %}
+<div class="container" id="ofertasTable">
+    <table class="table table-hover table-striped">
+        <thead>
+            <tr>
+                <th class="text-start">Titulo Ofertado</th>
+                <th class="text-start">Titulo Desejado</th>
+                <th class="text-end">Usuario Ofertante</th>
+                <th class="text-end">Usuario Receptor</th>
+                <th class="text-end">Contato</th>
+                <th class="text-end">Status</th>
+                <th class="text-end">Resposta</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for oferta in ofertas %}
+            <tr>
+                <td class="text-start">
+                    {{oferta.tituloO}}
+                </td>
+                <td class="text-start">
+                    {{oferta.tituloD}}
+                </td>
+                <td class="text-end">
+                    {{oferta.usuarioO}}
+                </td>
+                <td class="text-end">
+                    {{oferta.usuarioR}}
+                </td>
+                <td class="text-end">
+                    {{oferta.contato}}
+                </td>
+                <td class="text-end">
+                    {{oferta.status}}
+                </td>
+                <td class="text-end">
+                    {% if oferta.receptor == session['user_id'] and oferta.status == "Aberta" %}
+                    <form action="/aceitar_oferta" method="post">
+                        <input type="number" name="status" id="status" value="{{oferta.id}}" hidden>
+                        <button type="submit" class="btn-warning">Aceitar</button>
+                    </form>
+                    <form action="/recusar_oferta" method="post">
+                        <input type="number" name="status" id="status" value="{{oferta.id}}" hidden>
+                        <button type="submit" class="btn-danger">Recusar</button>
+                    </form>
+                    {% endif %}
+
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

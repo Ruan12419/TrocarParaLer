@@ -1,0 +1,126 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Início
+{% endblock %}
+
+{% block main %}
+<div class="container text-left">
+    <div class="row align-items-start">
+        <div class="col-10">
+            <div class="conteudo">
+                <div class="apresentacao">
+                    <p>
+                        TrocarParaLer é uma plataforma para amantes de livros trocarem suas leituras. Aqui, você
+                        pode listar
+                        os livros que deseja trocar, descobrir novos títulos e fazer ofertas de troca. Junte-se
+                        a nós e
+                        comece a descobrir novas histórias hoje!
+                    </p>
+                    <p>
+                        Nossa missão é criar uma comunidade de leitores apaixonados que valorizam a troca de
+                        livros como uma
+                        maneira de compartilhar histórias, ideias e experiências.
+                    </p>
+                    <p>
+                        Você pode listar os livros que já leu e está disposto a trocar. Você pode navegar pelos
+                        livros
+                        disponíveis listados por outros usuários e fazer uma oferta de troca. Se a outra pessoa
+                        aceitar a
+                        sua oferta, parabéns! Você acabou de encontrar um novo livro para ler.
+                    </p>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-2">
+            <div class="foto">
+                <img src="/static/leitura.JPG" alt="menino-lendo" title="menino-lendo">
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block livros %}
+{% if session['user_id'] %}
+<div class="container" id="livrosTable" style="margin-top: 100px;">
+    <table class="table table-hover table-striped">
+        <thead>
+            <tr>
+                <th class="text-start">ISBN</th>
+                <th class="text-end">Título</th>
+                <th class="text-end">Autor</th>
+                <th class="text-end">Ano</th>
+                <th class="text-end">Trocar</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for livro in livros %}
+            <tr>
+                <td class="text-start">
+                    {{livro.isbn}}
+                </td>
+                <td class="text-start">
+                    {{livro.titulo}}
+                </td>
+                <td class="text-end">
+                    {{livro.autor}}
+                </td>
+                <td class="text-end">
+                    {{livro.ano}}
+                </td>
+                {% if livro.id_usuario != session["user_id"]%}
+                <td class="text-end">
+                    <form action="{{url_for('minhas_ofertas')}}" method="get">
+                        <input type="submit" id="login-btn" value="Trocar">
+                    </form>
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+</div>
+{% endif %}
+{% endblock %}
+<footer>
+    <h3>TrocarParaLer | Ruan Lima</h3>
+</footer>
+
+<h1>Adicionar Usuário</h1>
+<form action="/add_usuario" method="post">
+    <label for="nome">Nome:</label><br>
+    <input type="text" id="nome" name="nome"><br>
+    <label for="email">Email:</label><br>
+    <input type="email" id="email" name="email"><br>
+    <label for="senha">Senha:</label><br>
+    <input type="password" id="senha" name="senha"><br>
+    <input type="submit" value="Adicionar Usuário">
+</form>
+<h2>Usuários</h2>
+<table class="table-livros">
+    <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Email</th>
+        <th>Senha</th>
+    </tr>
+    {% for usuario in usuarios %}
+    <tr>
+        <td>{{ usuario[0] }}</td>
+        <td>{{ usuario[1] }}</td>
+        <td>{{ usuario[2] }}</td>
+        <td>{{ usuario[3] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% block styleLivros %}
+{% endblock %}
+</body>
+
+</html>
