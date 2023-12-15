@@ -13,7 +13,7 @@ cursor.execute("SELECT * FROM Usuarios")
 
 # Obter todos os resultados da consulta
 usuarios = cursor.fetchall()
-
+ 
 # Imprimir todos os usuários
 for usuario in usuarios:
     print(usuario)
