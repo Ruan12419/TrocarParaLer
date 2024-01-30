@@ -17,7 +17,7 @@ Meus Livros
                 <select class="form-select" id="oferta" name="oferta" required>
                     <option selected>Escolha...</option>
                     {% for mLivro in mLivros %}
-                    <option value="{{mLivro.id}}">{{mLivro.titulo}}</option>
+                    <option value="{{mLivro.id_livros}}">{{mLivro.titulo}}</option>
                     {% endfor %}
                 </select>
                 <label class="input-group-text" for="desejo">Livro Desejado</label>
@@ -25,7 +25,7 @@ Meus Livros
                     <option selected>Escolha...</option>
                     {% for livro in livros %}
                     {% if livro.id_usuario != session['user_id']%}
-                    <option value="{{livro.id}}">{{livro.titulo}}</option>
+                    <option value="{{livro.id_livros}}">{{livro.titulo}}</option>
                     {% endif %}
                     {% endfor %}
                 </select><br>
@@ -51,7 +51,11 @@ Meus Livros
                 <th class="text-end">Usuario Receptor</th>
                 <th class="text-end">Contato</th>
                 <th class="text-end">Status</th>
+                {% for oferta in ofertas %}
+                {% if oferta.receptor == session['user_id'] and oferta.status == "Aberta" %}
                 <th class="text-end">Resposta</th>
+                {% endif %}
+                {% endfor %}
             </tr>
         </thead>
         <tbody>
@@ -75,19 +79,18 @@ Meus Livros
                 <td class="text-end">
                     {{oferta.status}}
                 </td>
+                {% if oferta.receptor == session['user_id'] and oferta.status == "Aberta" %}
                 <td class="text-end">
-                    {% if oferta.receptor == session['user_id'] and oferta.status == "Aberta" %}
                     <form action="/aceitar_oferta" method="post">
-                        <input type="number" name="status" id="status" value="{{oferta.id}}" hidden>
+                        <input type="number" name="status" id="status" value="{{oferta.id_ofertas}}" hidden>
                         <button type="submit" class="btn-warning">Aceitar</button>
                     </form>
                     <form action="/recusar_oferta" method="post">
-                        <input type="number" name="status" id="status" value="{{oferta.id}}" hidden>
+                        <input type="number" name="status" id="status" value="{{oferta.id_ofertas}}" hidden>
                         <button type="submit" class="btn-danger">Recusar</button>
                     </form>
-                    {% endif %}
-
                 </td>
+                {% endif %}
             </tr>
             {% endfor %}
         </tbody>

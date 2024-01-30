@@ -21,7 +21,10 @@ CREATE TABLE Livros (
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
     Titulo TEXT NOT NULL,
     Autor TEXT NOT NULL,
+    Sinopse TEXT,
+    Editora TEXT,
     Ano INTEGER,
+    Capa TEXT,
     ID_Usuario INTEGER,
     FOREIGN KEY(ID_Usuario) REFERENCES Usuarios(ID)
 );

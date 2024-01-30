@@ -13,25 +13,72 @@ Meus Livros
     <h5><button type="button" id="btn-addLivro" onclick="addLivro()">Adicione um Livro</button></h5>
     <div class="container" id="addLivro" style="display: none;">
         <form action="/add_livro" method="post" autocomplete="off">
-            <div class="mb-3">
-                <label for="isbn" class="form-label">ISBN</label>
-                <input type="text" class="form-control" id="isbn" name="isbn" required>
+            <!-- Etapa 1 -->
+            <div id="step1">
+                <div class="mb-3">
+                    <label for="isbn" class="form-label">ISBN</label>
+                    <input type="text" class="form-control" id="isbn" name="isbn" required>
+                </div>
+                <div class="mb-3">
+                    <label for="titulo" class="form-label">Titulo</label>
+                    <input type="text" class="form-control" id="titulo" name="titulo" required>
+                </div>
+                <div class="mb-3">
+                    <label for="sinopse" class="form-label">Sinopse</label>
+                    <input type="text" class="form-control" id="sinopse" name="sinopse">
+                </div>
+                <div class="mb-3">
+                    <label for="ano" class="form-label">Ano</label>
+                    <input type="date" class="form-control" id="ano" name="ano" required>
+                </div>
+                <div class="mb-3">
+                    <label for="ano" class="form-label">Capa</label>
+                    <input type="text" class="form-control" id="capa" name="capa">
+                </div>
             </div>
-            <div class="mb-3">
-                <label for="titulo" class="form-label">Titulo</label>
-                <input type="text" class="form-control" id="titulo" name="titulo" required>
+
+            <!-- Etapa 2 -->
+            <div id="step2">
+                <div class="mb-3">
+                    <label for="autor" class="form-label">Nome do Autor</label>
+                    <input type="text" class="form-control" id="autor" name="autor" required>
+                </div>
+                <div class="mb-3">
+                    <label for="biografia" class="form-label">Biografia do Autor</label>
+                    <textarea class="form-control" id="biografia" name="biografia"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="editora" class="form-label">Nome da Editora</label>
+                    <input type="text" class="form-control" id="editora" name="editora" required>
+                </div>
+                <div class="mb-3">
+                    <label for="website" class="form-label">Website da Editora</label>
+                    <input type="text" class="form-control" id="website" name="website">
+                </div>
             </div>
-            <div class="mb-3">
-                <label for="autor" class="form-label">Autores</label>
-                <input type="text" class="form-control" id="autor" name="autor" required>
+
+            <!-- Etapa 3 -->
+            <div id="step3">
+                <div class="mb-3">
+                    <label for="estado" class="form-label">Estado do Livro</label>
+                    <input type="text" class="form-control" id="estado" name="estado" required>
+                </div>
+                <div class="mb-3">
+                    <label for="tempo_compra" class="form-label">Tempo de Compra do Livro</label>
+                    <input type="text" class="form-control" id="tempo_compra" name="tempo_compra" required>
+                </div>
+                <div class="mb-3">
+                    <label for="motivo_troca" class="form-label">Motivo da Troca do Livro</label>
+                    <input type="text" class="form-control" id="motivo_troca" name="motivo_troca" required>
+                </div>
+                <div class="mb-3">
+                    <label for="opiniao" class="form-label">Opinião Sobre o Livro</label>
+                    <textarea class="form-control" id="opiniao" name="opiniao"></textarea>
+                </div>
+                <input type="number" class="form-control" id="fcation" name="fcation" value="{{session['user_id']}}"
+                    hidden required>
+                <button type="submit" class="btn btn-success" id="submitBtn">Adicionar Livro</button>
             </div>
-            <div class="mb-3">
-                <label for="ano" class="form-label">Ano</label>
-                <input type="date" class="form-control" id="ano" name="ano" required>
-            </div>
-            <input type="number" class="form-control" id="fcation" name="fcation" value="{{session['user_id']}}" hidden
-                required>
-            <button type="submit" class="btn btn-success" id="submitBtn">Adicionar Livro</button>
         </form>
     </div>
 </div>
@@ -56,40 +103,40 @@ Meus Livros
                 <td class="text-start">
                     {{livro.titulo}}
                     <form action="/atualizar_livro" method="post" id="attTitulo{{livro.titulo}}">
-                        <input type="text" id="livro{{livro.isbn}}" name="isbn" value="{{livro.isbn}}" hidden>
+                        <input type="text" id="livro{{livro.isbn}}" name="isbn_att" value="{{livro.isbn}}" hidden>
                         <input type="text" class="form-control" id="tituloInput{{livro.isbn}}" name="titulo"
-                        value="{{livro.titulo}}" hidden>
+                            value="{{livro.titulo}}" hidden>
                         <button class="btn btn-warning" type="button" id="atualizar{{livro.isbn}}"
-                        onclick="mostraInput('{{livro.isbn}}')">Atualizar</button>
-                        <button class="btn btn-primary" type="submit" id="salvar{{livro.isbn}}"
-                        hidden>Salvar</button>
+                            onclick="mostraInput('{{livro.isbn}}')">Atualizar</button>
+                        <button class="btn btn-primary" type="submit" id="salvar{{livro.isbn}}" hidden>Salvar</button>
                     </form>
                 </td>
                 <td class="text-end">
-                    {{livro.autor}}
+                    {{livro.nome}}
                 </td>
                 <td class="text-end">
-                    {{livro.ano}}
+                    {{livro.ano_publicacao}}
                 </td>
                 <td class="text-end">
                     <form action="/deletar_livro" method="post">
-                        <input type="text" name="isbn" id="isbn{{livro.isbn}}" value="{{livro.isbn}}" hidden>
+                        <input type="text" name="isbn_del" id="isbn{{livro.isbn}}" value="{{livro.isbn}}" hidden>
                         <button class="btn btn-danger" type="submit">Deletar</button>
                     </form>
                 </td>
             </tr>
             {% endfor %}
-            
+
         </tbody>
 
     </table>
 </div>
 {% endif %}
+
 <script>
     function addLivro() {
         $("#addLivro").toggle();
         $("html, body").animate({
-            scrollTop: $(document).scrollTop() + 200
+            scrollTop: $(document).scrollTop() + 40
         }, "slow");
     }
 
@@ -99,4 +146,7 @@ Meus Livros
         document.getElementById("salvar" + isbn).removeAttribute("hidden");
     }
 </script>
+
+
+
 {% endblock %}
