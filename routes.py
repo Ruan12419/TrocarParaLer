@@ -3,6 +3,9 @@ from app import app, db
 from models import *
 from sqlalchemy.orm import aliased
 import uuid
+import base64
+import os
+
 
 
 @app.route('/')
@@ -19,6 +22,8 @@ def login():
         if usuarios and usuarios.check_password(request.form['senha']):
             session['user_id'] = usuarios.id_usuarios
             return redirect(url_for("home"))
+        else:
+            return render_template("login.html", erro="Email ou senha incorreto!")
     return render_template("login.html")
 
 @app.route("/logout", methods=['POST'])
@@ -36,15 +41,14 @@ def add_usuario():
     confirma_senha = request.form['confirmacao_senha']
     if senha != confirma_senha:
         return render_template("login.html", erro="As senhas não correspondem!")
-    usuario = Usuarios(id_usuarios=get_uuid(), nome=nome, data_nasc=data_nasc, sexo=sexo, email=email)
+    id_usuarios = int(get_uuid(1))
+    usuario = Usuarios(id_usuarios=id_usuarios, nome=nome, data_nasc=data_nasc, sexo=sexo, email=email)
     usuario.set_password(senha)
     db.session.add(usuario)
     db.session.commit()
     session['user_id'] = usuario.id_usuarios
     return redirect(url_for("home"))
 
-Estado_LivrosL = aliased(Estado_Livros)
-Estado_LivrosU = aliased(Estado_Livros)
 @app.route("/meus_livros", methods=['GET'])
 def meus_livros():
     if 'user_id' in session:
@@ -53,6 +57,7 @@ def meus_livros():
             .join(Estado_Livros, Livros.id_livros == Estado_Livros.livros_id_livros)\
             .filter(Estado_Livros.usuarios_id_usuarios == session['user_id']).all()
         """
+        #db.session.refresh()
         livros = db.session.query(
             Livros.isbn,
             Livros.titulo,
@@ -67,7 +72,32 @@ def meus_livros():
         ).filter(
             Estado_Livros.usuarios_id_usuarios == session['user_id']
         ).all()
+        
+        fotos = db.session.query(
+            Fotos.foto_base64, 
+            Fotos.caminho
+        ).join(
+            Estado_Livros, Fotos.estado_livros_id_estado_livros == Estado_Livros.id_estado_livros
+        ).filter(
+            Estado_Livros.usuarios_id_usuarios == session['user_id']
+        ).all()
+        
+        if fotos is not None:
+            foto_paths = []
+            for foto in fotos:
+                foto_string = foto.foto_base64
+                foto_data = base64.b64decode(foto_string)
+                foto_path = 'static/fotos-tmp/' + str(foto.caminho) + '.jpg'
+                
+                os.makedirs(os.path.dirname(foto_path), exist_ok=True)
+                
+                if not os.path.exists(foto_path):
+                    with open(foto_path, 'wb') as f:
+                        f.write(foto_data)
+                foto_paths.append(foto_path)
+            return render_template('meus_livros.html', livros=livros, foto_paths=foto_paths)
         return render_template("meus_livros.html", livros=livros)
+
 
     return redirect(url_for("login"))
 
@@ -123,11 +153,13 @@ def add_livro():
     motivo_troca = request.form['motivo_troca']
     opiniao = request.form['opiniao']
     usuario = request.form['fcation']
+    fotos = request.files.getlist('fotos')
     
-    uuid_livro = get_uuid()
-    uuid_autor = get_uuid()
-    uuid_editora = get_uuid()
-    uuid_estado_livro = get_uuid()
+    uuid_livro = get_uuid(1)
+    uuid_autor = get_uuid(1)
+    uuid_editora = get_uuid(1)
+    uuid_estado_livro = get_uuid(1)
+    
     
     livro = Livros(id_livros=uuid_livro, isbn=isbn, titulo=titulo, sinopse=sinopse, capa=capa, ano_publicacao=ano)
     autor = Autores(id_autores=uuid_autor, nome=autor_nome, biografia=biografia)
@@ -137,12 +169,7 @@ def add_livro():
     estado_livro = Estado_Livros(id_estado_livros=uuid_estado_livro, estado=estado, tempo_compra=tempo_compra, motivo_troca=motivo_troca, 
                                  opiniao_livro=opiniao, usuarios_id_usuarios=usuario, livros_id_livros=uuid_livro)
     
-    """ insert into autores(id_autores, nome) values (1, "Josh Goblin");
-        insert into autores_has_livros() values (1, 1);
-        insert into editoras(id_editoras, nome) values (1, "The Reviews");
-        insert into editoras_has_livros() values (1,1);
-        insert into estado_livros() values (1, "Novo", "2 anos", "Li todo!", "Gostei muito", 1, 1);
-    """
+    
     db.session.add(livro)
     db.session.commit()
     db.session.add(autor)
@@ -155,6 +182,15 @@ def add_livro():
     db.session.commit()
     db.session.add(estado_livro)
     db.session.commit()
+    
+    for foto in fotos:
+        foto_string = base64.b64encode(foto.read())
+        uuid_fotos = get_uuid(1)
+        caminho = get_uuid(0)
+        imagens = Fotos(id_fotos=uuid_fotos, foto_base64=foto_string, caminho=caminho, estado_livros_id_estado_livros=uuid_estado_livro)
+        db.session.add(imagens)
+        db.session.commit()
+
     return redirect(url_for("home"))
 
 @app.route("/atualizar_livro", methods=['POST'])
@@ -206,7 +242,7 @@ def add_oferta():
     if Ofertas.query.filter_by(id_usuario_receptor=usuarioR, id_usuario_ofertante=usuarioO).first():
         return redirect(url_for("minhas_ofertas"))
     
-    oferta = Ofertas(id_ofertas=get_uuid(),id_livro_ofertado=oferta, id_livro_desejado=desejo, id_usuario_ofertante=usuarioO, id_usuario_receptor=usuarioR[0], status=status)
+    oferta = Ofertas(id_ofertas=get_uuid(1),id_livro_ofertado=oferta, id_livro_desejado=desejo, id_usuario_ofertante=usuarioO, id_usuario_receptor=usuarioR[0], status=status)
     db.session.add(oferta)
     db.session.commit()
     return redirect(url_for("minhas_ofertas"))
@@ -227,6 +263,9 @@ def recusar_oferta():
     db.session.commit()
     return redirect(url_for("minhas_ofertas"))
 
-def get_uuid():
-    uuid_aleatorio = uuid.uuid4()    
-    return uuid_aleatorio.int/100000000000000000000000000000000
+def get_uuid(n):
+    if n:
+        uuid_aleatorio = uuid.uuid4()    
+        return uuid_aleatorio.int/100000000000000000000000000000000
+    uuid_aleatorio = uuid.uuid4()
+    return uuid_aleatorio

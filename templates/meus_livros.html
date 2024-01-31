@@ -12,7 +12,7 @@ Meus Livros
 <div class="container-fluid py-5 text-center">
     <h5><button type="button" id="btn-addLivro" onclick="addLivro()">Adicione um Livro</button></h5>
     <div class="container" id="addLivro" style="display: none;">
-        <form action="/add_livro" method="post" autocomplete="off">
+        <form action="/add_livro" method="post" autocomplete="off" enctype="multipart/form-data">
             <!-- Etapa 1 -->
             <div id="step1">
                 <div class="mb-3">
@@ -32,7 +32,7 @@ Meus Livros
                     <input type="date" class="form-control" id="ano" name="ano" required>
                 </div>
                 <div class="mb-3">
-                    <label for="ano" class="form-label">Capa</label>
+                    <label for="capa" class="form-label">Capa</label>
                     <input type="text" class="form-control" id="capa" name="capa">
                 </div>
             </div>
@@ -75,6 +75,11 @@ Meus Livros
                     <label for="opiniao" class="form-label">Opinião Sobre o Livro</label>
                     <textarea class="form-control" id="opiniao" name="opiniao"></textarea>
                 </div>
+                <div class="mb-3">
+                    <label for="fotos" class="btn btn-primary" id="escolher-fotos">Escolher Fotos do Livro</label>
+                    <input type="file" multiple class="form-control" id="fotos" name="fotos" style="display: none;">
+                    <div id="preview"></div>
+                </div>
                 <input type="number" class="form-control" id="fcation" name="fcation" value="{{session['user_id']}}"
                     hidden required>
                 <button type="submit" class="btn btn-success" id="submitBtn">Adicionar Livro</button>
@@ -87,6 +92,7 @@ Meus Livros
     <table class="table table-hover table-striped">
         <thead>
             <tr>
+                <th class="text-start">Imagens</th>
                 <th class="text-start">ISBN</th>
                 <th class="text-end">Título</th>
                 <th class="text-end">Autor</th>
@@ -97,6 +103,11 @@ Meus Livros
         <tbody>
             {% for livro in livros %}
             <tr>
+                <td class="text-start">
+                    {% for foto_path in foto_paths %}
+                    <img src="{{ foto_path }}" alt="Foto" height="75" width="75">
+                    {% endfor %}
+                </td>
                 <td class="text-start">
                     {{livro.isbn}}
                 </td>
@@ -132,21 +143,7 @@ Meus Livros
 </div>
 {% endif %}
 
-<script>
-    function addLivro() {
-        $("#addLivro").toggle();
-        $("html, body").animate({
-            scrollTop: $(document).scrollTop() + 40
-        }, "slow");
-    }
-
-    function mostraInput(isbn) {
-        document.getElementById("tituloInput" + isbn).removeAttribute("hidden");
-        document.getElementById("atualizar" + isbn).style.display = "none";
-        document.getElementById("salvar" + isbn).removeAttribute("hidden");
-    }
-</script>
-
+<script src="/static/js/meus_livros.js"></script>
 
 
 {% endblock %}

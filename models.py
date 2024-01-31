@@ -58,6 +58,13 @@ class Estado_Livros(db.Model):
     opiniao_livro = db.Column(db.String(45), nullable=False)
     usuarios_id_usuarios = db.Column(db.Integer, db.ForeignKey('usuarios.id_usuarios'), nullable=False)
     livros_id_livros = db.Column(db.Integer, db.ForeignKey('livros.id_livros'), nullable=False)
+    
+class Fotos(db.Model):
+    __tablename__ = "fotos"
+    id_fotos = db.Column(db.Integer, primary_key=True)
+    foto_base64 = db.Column(db.String(64000), nullable=False)
+    caminho = db.Column(db.String(1000), nullable=False)
+    estado_livros_id_estado_livros = db.Column(db.Integer, db.ForeignKey("estado_livros.id_estado_livros"), nullable=False)
 
 class Ofertas(db.Model):
     __tablename__ = 'ofertas'

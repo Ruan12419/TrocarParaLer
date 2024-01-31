@@ -22,7 +22,6 @@ class TestYourFlaskApp(unittest.TestCase):
         db.session.commit()
         self.assertEqual(Usuario.query.count(), 1)
 
-    # Adicione mais testes conforme necessário para cada rota e modelo
 
 if __name__ == "__main__":
     unittest.main()

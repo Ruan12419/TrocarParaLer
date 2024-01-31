@@ -4,48 +4,37 @@
 Início
 {% endblock %}
 
-{% block main %}
-<div class="container text-left">
-    <div class="row align-items-start">
-        <div class="col-10">
-            <div class="conteudo">
-                <div class="apresentacao">
-                    <p>
-                        TrocarParaLer é uma plataforma para amantes de livros trocarem suas leituras. Aqui, você
-                        pode listar
-                        os livros que deseja trocar, descobrir novos títulos e fazer ofertas de troca. Junte-se
-                        a nós e
-                        comece a descobrir novas histórias hoje!
-                    </p>
-                    <p>
-                        Nossa missão é criar uma comunidade de leitores apaixonados que valorizam a troca de
-                        livros como uma
-                        maneira de compartilhar histórias, ideias e experiências.
-                    </p>
-                    <p>
-                        Você pode listar os livros que já leu e está disposto a trocar. Você pode navegar pelos
-                        livros
-                        disponíveis listados por outros usuários e fazer uma oferta de troca. Se a outra pessoa
-                        aceitar a
-                        sua oferta, parabéns! Você acabou de encontrar um novo livro para ler.
-                    </p>
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-2">
-            <div class="foto">
-                <img src="/static/leitura.JPG" alt="menino-lendo" title="menino-lendo">
-            </div>
-        </div>
-    </div>
+{% if erro %}
+<div class="alert alert-danger mb-0 text-center" role="error" id="erroMsg" style="display: none;">
+    <p>{{erro}}</p>
 </div>
+{% endif %}
 
+{% block main %}
+<main class="container text-left">
+    <div class="row align-items-start">
+        <article class="col-10">
+            <div class="conteudo">
+                <section class="apresentacao">
+                    <p>TrocarParaLer é uma plataforma para amantes de livros trocarem suas leituras. Aqui, você pode listar os livros que deseja trocar, descobrir novos títulos e fazer ofertas de troca. Junte-se a nós e comece a descobrir novas histórias hoje!</p>
+                    <p>Nossa missão é criar uma comunidade de leitores apaixonados que valorizam a troca de livros como uma maneira de compartilhar histórias, ideias e experiências.</p>
+                    <p>Você pode listar os livros que já leu e está disposto a trocar. Você pode navegar pelos livros disponíveis listados por outros usuários e fazer uma oferta de troca. Se a outra pessoa aceitar a sua oferta, parabéns! Você acabou de encontrar um novo livro para ler.</p>
+                </section>
+            </div>
+        </article>
+
+        <aside class="col-2">
+            <div class="foto">
+                <img src="/static/leitura.JPG" alt="Um menino lendo um livro" title="menino-lendo">
+            </div>
+        </aside>
+    </div>
+</main>
 {% endblock %}
+
 {% block livros %}
 {% if session['user_id'] %}
-<div class="container" id="livrosTable" style="margin-top: 100px;">
+<div class="container" id="livrosTable">
     <table class="table table-hover table-striped">
         <thead>
             <tr>
@@ -87,11 +76,12 @@ Início
 </div>
 {% endif %}
 {% endblock %}
+
 <footer>
     <h3>TrocarParaLer | Ruan Lima</h3>
 </footer>
+
 {% block styleLivros %}
 {% endblock %}
 </body>
-
 </html>
