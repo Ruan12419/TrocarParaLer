@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+import uuid
 import os
 import time
 import threading
@@ -13,6 +14,15 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
+def get_uuid(n):
+    if n:
+        uuid_aleatorio = uuid.uuid4()    
+        return uuid_aleatorio.int/100000000000000000000000000000000
+    uuid_aleatorio = uuid.uuid4()
+    return uuid_aleatorio
+
+
+
 def limpar_imagens_antigas():
     while True:
         agora = time.time()
@@ -23,13 +33,18 @@ def limpar_imagens_antigas():
         time.sleep(60)
 
 
+
+def db_add(model):
+    try:
+        db.session.add(model)
+        db.session.commit()
+    except Exception as e:
+        print(e)
+
+
 threading.Thread(target=limpar_imagens_antigas).start()
 
-
-
 if __name__ == '__main__':
-    from models import *
-    from routes import *
     with app.app_context():
         db.create_all()
     app.run(debug=True)
