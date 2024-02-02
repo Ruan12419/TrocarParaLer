@@ -1,7 +1,7 @@
 from flask import request, render_template, redirect, url_for, session
 from app import app, db, get_uuid, db_add
 from routes.login import *
-from models import *
+from models.ofertas_model import *
 from sqlalchemy.orm import aliased
 
 

@@ -1,6 +1,6 @@
 from flask import request, render_template, redirect, url_for, session
 from app import app, db, get_uuid
-from models import *
+from models.usuarios_model import *
 
 
 @app.route("/login", methods=['GET', 'POST'])

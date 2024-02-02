@@ -3,7 +3,6 @@ from app import app
 from routes.login import *
 from routes.livros import *
 from routes.ofertas import *
-from models import *
 
 
 @app.route('/')

@@ -1,8 +1,11 @@
 from flask import request, render_template, redirect, url_for, session
 from app import app, db, get_uuid, db_add
-from routes.routes import *
+from routes.index import *
 from routes.login import *
-from models import *
+from models.livros_model import *
+from models.autores_model import *
+from models.editoras_model import *
+from models.fotos_model import *
 import base64
 import os
 
