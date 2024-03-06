@@ -1,5 +1,6 @@
 from flask import request, render_template, redirect, url_for, session
 from app import app, db, get_uuid, db_add
+from sqlalchemy import text
 from routes.index import *
 from routes.login import *
 from models.livros_model import *
@@ -85,37 +86,39 @@ def add_livro():
     uuid_autor = get_uuid(1)
     uuid_editora = get_uuid(1)
     uuid_estado_livro = get_uuid(1)
+    uuid_fotos = get_uuid(1)
     
+    fotos_string = ','.join([base64.b64encode(foto.read()).decode('utf-8') for foto in fotos])
+
+    params = {"isbn": isbn,
+        "titulo": titulo,
+        "sinopse": sinopse,
+        "ano": ano,
+        "capa": capa,
+        "autor_nome": autor_nome,
+        "biografia": biografia,
+        "editora_nome": editora_nome,
+        "website": website,
+        "estado": estado,
+        "tempo_compra": tempo_compra,
+        "motivo_troca": motivo_troca,
+        "opiniao": opiniao,
+        "usuario": usuario,
+        "fotos_string": fotos_string,
+        "uuid_livro": uuid_livro,
+        "uuid_autor": uuid_autor,
+        "uuid_editora": uuid_editora,
+        "uuid_estado_livro": uuid_estado_livro,
+        "uuid_fotos": uuid_fotos
+    }
     
-    livro = Livros(id_livros=uuid_livro, isbn=isbn, titulo=titulo, sinopse=sinopse, capa=capa, ano_publicacao=ano)
-    
-    autor = Autores(id_autores=uuid_autor, nome=autor_nome, biografia=biografia)
-    
-    autor_livro = Autores_Livro(autores_id_autores=uuid_autor, livros_id_livros=uuid_livro)
-    
-    editora = Editoras(id_editoras=uuid_editora, nome=editora_nome, website=website)
-    
-    editora_livro = Editoras_Livro(editoras_id_editoras=uuid_editora, livros_id_livros=uuid_livro)
-    
-    estado_livro = Estado_Livros(id_estado_livros=uuid_estado_livro, estado=estado, tempo_compra=tempo_compra, motivo_troca=motivo_troca, 
-                                opiniao_livro=opiniao, usuarios_id_usuarios=usuario, livros_id_livros=uuid_livro)
-    
-    
-    db_add(livro)
-    db_add(autor)
-    db_add(autor_livro)
-    db_add(editora)
-    db_add(editora_livro)
-    db_add(estado_livro)
-    
-    for foto in fotos:
-        foto_string = base64.b64encode(foto.read())
-        uuid_fotos = get_uuid(1)
-        caminho = get_uuid(0)
-        imagens = Fotos(id_fotos=uuid_fotos, foto_base64=foto_string, caminho=caminho, estado_livros_id_estado_livros=uuid_estado_livro)
-        db_add(imagens)
+    stmt = text("CALL AddLivro(:isbn, :titulo, :sinopse, :ano, :capa, :autor_nome, :biografia, :editora_nome, :website, :estado, "
+                +":tempo_compra, :motivo_troca, :opiniao, :usuario, :fotos_string, :uuid_livro, :uuid_autor, :uuid_editora, :uuid_estado_livro, :uuid_fotos)")
+    db.session.execute(stmt, params)
+    db.session.commit()
 
     return redirect(url_for("home"))
+
 
 @app.route("/atualizar_livro", methods=['POST'])
 def atualizar_livro():
@@ -140,6 +143,7 @@ def deletar_livro():
         try:
             Livros.query.filter_by(isbn=isbn).delete()
             db.session.commit()
+            app.limpar_imagens_antigas()
             return redirect(url_for("meus_livros"))
         except Exception as e:
             print(e)
